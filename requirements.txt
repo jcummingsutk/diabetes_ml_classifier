@@ -1,0 +1,10 @@
+black
+click
+matplotlib
+numpy
+pandas
+pylint
+pytest
+pytest-cov
+sklearn
+seaborn
