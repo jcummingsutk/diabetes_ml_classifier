@@ -5,6 +5,9 @@ from src.models.predict import predict
 
 
 def train_model():
+    """
+    retrain the gradient boosting classifier models
+    """
     df_scaled = load_data()
     X_train, _ , y_train, _ = pop_train_test_split(df_scaled)
     grid_clf_boost = find_optimal_model(X_train, y_train)
