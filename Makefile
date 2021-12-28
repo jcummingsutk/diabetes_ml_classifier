@@ -3,13 +3,13 @@ install:
 		pip install -r requirements.txt
 
 format:
-	black *.py
+	black *.py &&\
+	black src/utils/*.py &&\
+	black src/models/*.py
 
 lint:
-	pylint --disable=R,C *.py
-	pylint --disable=R,C src/utils/*.py
+	pylint --disable=R,C src/utils/*.py &&\
+		pylint --disable=R,C src/models/*.py &&\
+		pylint --disable=R,C *.py 
 
-test:
-	python -m pytest -vv --cov=hello *.py
-
-all: install lint test
+all: install lint
