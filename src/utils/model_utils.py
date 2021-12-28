@@ -51,7 +51,7 @@ def find_optimal_model(X_train, y_train):
     1 when P(input > thresh) and 0 otherwise, we achieve 80% recall
     on the training set.
     """
-    TEST_FRACTION, CV, OPT_ON, N_JOBS = load_gridsearch_parameters()
+    CV, OPT_ON, N_JOBS = load_gridsearch_parameters()
     grid_values_boost = load_gridsearch_model_parameters()
     clf_boost = GradientBoostingClassifier()
     grid_clf_boost = GridSearchCV(

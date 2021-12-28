@@ -5,6 +5,7 @@ import logging
 from pickle import dump
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from src.utils.parameter_loader import load_test_fraction
 
 
 def clean_data(df) -> pd.DataFrame:
@@ -64,12 +65,13 @@ def load_data() -> pd.DataFrame:
     return df
 
 
-def pop_train_test_split(df, test_fraction=0.2, in_random_state=0):
+def pop_train_test_split(df,in_random_state=0):
     """
     Pops the outcome variable and train,test,splits
     """
+    TEST_FRACTION = load_test_fraction()
     y = df.pop("outcome")
     X_train, X_test, y_train, y_test = train_test_split(
-        df, y, test_size=test_fraction, random_state=in_random_state
+        df, y, test_size=TEST_FRACTION, random_state=in_random_state
     )
     return X_train, X_test, y_train, y_test
