@@ -5,7 +5,7 @@ from run import make_prediction
 app = Flask(__name__)
 
 @app.route("/", methods=["GET","POST"])
-def hello():
+def diabetes():
     prediction_statement = "please enter some values to obtain a prediction on your diabetes status"
     if request.method == "POST":
         preg = request.form['pregnancies']
