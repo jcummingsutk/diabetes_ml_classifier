@@ -1,7 +1,6 @@
 import pickle
 import json
 import logging
-import pickle
 
 
 def predict(input_params):
@@ -17,7 +16,7 @@ def predict(input_params):
         with open("src/conf/threshold_data.json", "r", encoding="utf-8") as read_file:
             data = json.load(read_file)
             thresh = data["thresh"]
-    except:
+    except IOError:
         thresh = 0.5
         logging.info("using default threshold of {:.2f}".format(thresh))
     model = pickle.load(open("src/models/model.pkl", "rb"))
