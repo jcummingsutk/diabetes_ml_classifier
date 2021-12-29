@@ -474,7 +474,7 @@ summary_of_model(grid_clf_boost, X_train, X_test, y_train, y_test, thresh)
 
 
 
-    
+
 ![png](img/output_16_1.png)
 
 
