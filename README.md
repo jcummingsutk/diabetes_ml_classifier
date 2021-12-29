@@ -7,7 +7,7 @@ Goal: The goal of this project is to develop a good conservative diabetes classi
 to have a maximize recall. Good is in the sense that we still want our classifier to have
 reasonable accuracy.
 
-The project is organized as follows:
+The Check out the [jupyter notebook](https://github.com/jcummingsutk/diabetes_ml_classifier/blob/master/diabetes_classifier.ipynb) is organized as follows:
 
 
 1. EDA, Understanding the Data
