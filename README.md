@@ -1,6 +1,8 @@
 # A Diabetes Classifier
 link to dataset: [diabetes dataset](https://www.kaggle.com/mathchi/diabetes-data-set)
 
+Check out the [jupyter notebook](https://github.com/jcummingsutk/diabetes_ml_classifier/blob/master/diabetes_classifier.ipynb)
+
 Goal: The goal of this project is to develop a good conservative diabetes classifier. Conservative here is in the sense that we'd like
 to have a maximize recall. Good is in the sense that we still want our classifier to have
 reasonable accuracy.
