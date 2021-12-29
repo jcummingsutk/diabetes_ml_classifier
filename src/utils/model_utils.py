@@ -3,7 +3,7 @@ from src.utils.parameter_loader import (
     load_gridsearch_parameters,
     load_gridsearch_model_parameters,
 )
-from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import GridSearchCV
 import json
 import pickle
@@ -52,14 +52,14 @@ def find_optimal_model(X_train, y_train):
     on the training set.
     """
     CV, OPT_ON, N_JOBS = load_gridsearch_parameters()
-    grid_values_boost = load_gridsearch_model_parameters()
-    clf_boost = GradientBoostingClassifier()
-    grid_clf_boost = GridSearchCV(
-        clf_boost, param_grid=grid_values_boost, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS
+    grid_values_log = load_gridsearch_model_parameters()
+    clf_log = LogisticRegression()
+    grid_clf_log = GridSearchCV(
+        clf_log, param_grid=grid_values_log, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS
     )
 
-    grid_clf_boost.fit(X_train, y_train)
-    thresh = find_threshold(grid_clf_boost, y_train, X_train)
+    grid_clf_log.fit(X_train, y_train)
+    thresh = find_threshold(grid_clf_log, y_train, X_train)
 
     threshold_data = {}
     threshold_data["thresh"] = thresh
@@ -67,5 +67,5 @@ def find_optimal_model(X_train, y_train):
     with open("src/conf/threshold_data.json", "w", encoding="utf-8") as outfile:
         json.dump(threshold_data, outfile)
 
-    pickle.dump(grid_clf_boost, open("src/models/model.pkl", "wb"))
-    return grid_clf_boost
+    pickle.dump(grid_clf_log, open("src/models/model.pkl", "wb"))
+    return grid_clf_log
