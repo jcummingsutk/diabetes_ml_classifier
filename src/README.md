@@ -411,7 +411,7 @@ X_train, X_test, y_train, y_test = train_test_split(df_scaled, y, test_size=TEST
 from sklearn.ensemble import GradientBoostingClassifier
 >>> from sklearn.model_selection import GridSearchCV
 grid_values_boost = {'n_estimators': [100, 200, 300, 400, 500],
-                     'learning_rate': [5e-2, 6e-3, 7e-3, 8e-3, 9e-3],
+                     'learning_rate': [1e-3, 2e-3, 3e-3, 4e-3, 5e-3],
                      'max_depth': [2, 3]}
 clf_boost = GradientBoostingClassifier(random_state = RAND_STATE)
 grid_clf_boost = GridSearchCV(clf_boost, param_grid=grid_values_boost, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
@@ -422,89 +422,15 @@ grid_clf_boost.fit(X_train, y_train)
 
 
 
-    ---------------------------------------------------------------------------
-
-    KeyboardInterrupt                         Traceback (most recent call last)
-
-    <ipython-input-11-ebdb836e6bf6> in <module>
-          6 clf_boost = GradientBoostingClassifier(random_state = RAND_STATE)
-          7 grid_clf_boost = GridSearchCV(clf_boost, param_grid=grid_values_boost, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
-    ----> 8 grid_clf_boost.fit(X_train, y_train)
 
 
-    ~/.local/lib/python3.6/site-packages/sklearn/utils/validation.py in inner_f(*args, **kwargs)
-         61             extra_args = len(args) - len(all_args)
-         62             if extra_args <= 0:
-    ---> 63                 return f(*args, **kwargs)
-         64
-         65             # extra_args > 0
+    GridSearchCV(cv=7, estimator=GradientBoostingClassifier(random_state=0),
+                 n_jobs=5,
+                 param_grid={'learning_rate': [0.001, 0.002, 0.003, 0.004, 0.005],
+                             'max_depth': [2, 3],
+                             'n_estimators': [100, 200, 300, 400, 500]},
+                 scoring='f1', verbose=2)
 
-
-    ~/.local/lib/python3.6/site-packages/sklearn/model_selection/_search.py in fit(self, X, y, groups, **fit_params)
-        839                 return results
-        840
-    --> 841             self._run_search(evaluate_candidates)
-        842
-        843             # multimetric is determined here because in the case of a callable
-
-
-    ~/.local/lib/python3.6/site-packages/sklearn/model_selection/_search.py in _run_search(self, evaluate_candidates)
-       1294     def _run_search(self, evaluate_candidates):
-       1295         """Search all candidates in param_grid"""
-    -> 1296         evaluate_candidates(ParameterGrid(self.param_grid))
-       1297
-       1298
-
-
-    ~/.local/lib/python3.6/site-packages/sklearn/model_selection/_search.py in evaluate_candidates(candidate_params, cv, more_results)
-        807                                    (split_idx, (train, test)) in product(
-        808                                    enumerate(candidate_params),
-    --> 809                                    enumerate(cv.split(X, y, groups))))
-        810
-        811                 if len(out) < 1:
-
-
-    ~/.local/lib/python3.6/site-packages/joblib/parallel.py in __call__(self, iterable)
-       1054
-       1055             with self._backend.retrieval_context():
-    -> 1056                 self.retrieve()
-       1057             # Make sure that we get a last message telling us we are done
-       1058             elapsed_time = time.time() - self._start_time
-
-
-    ~/.local/lib/python3.6/site-packages/joblib/parallel.py in retrieve(self)
-        933             try:
-        934                 if getattr(self._backend, 'supports_timeout', False):
-    --> 935                     self._output.extend(job.get(timeout=self.timeout))
-        936                 else:
-        937                     self._output.extend(job.get())
-
-
-    ~/.local/lib/python3.6/site-packages/joblib/_parallel_backends.py in wrap_future_result(future, timeout)
-        540         AsyncResults.get from multiprocessing."""
-        541         try:
-    --> 542             return future.result(timeout=timeout)
-        543         except CfTimeoutError as e:
-        544             raise TimeoutError from e
-
-
-    /usr/lib/python3.6/concurrent/futures/_base.py in result(self, timeout)
-        425                 return self.__get_result()
-        426
-    --> 427             self._condition.wait(timeout)
-        428
-        429             if self._state in [CANCELLED, CANCELLED_AND_NOTIFIED]:
-
-
-    /usr/lib/python3.6/threading.py in wait(self, timeout)
-        293         try:    # restore state no matter what (e.g., KeyboardInterrupt)
-        294             if timeout is None:
-    --> 295                 waiter.acquire()
-        296                 gotit = True
-        297             else:
-
-
-    KeyboardInterrupt:
 
 
 
@@ -512,25 +438,56 @@ grid_clf_boost.fit(X_train, y_train)
 print('Best Params: {}, \n Best score: {}'.format(grid_clf_boost.best_params_, grid_clf_boost.best_score_))
 ```
 
+    Best Params: {'learning_rate': 0.005, 'max_depth': 2, 'n_estimators': 500},
+     Best score: 0.6185201065325289
+
+
 
 ```python
 thresh = find_threshold(grid_clf_boost, y_train, X_train)
 print(thresh)
 ```
 
+    0.3799999999999999
+
+
 
 ```python
 summary_of_model(grid_clf_boost, X_train, X_test, y_train, y_test, thresh)
 ```
 
+                  precision    recall  f1-score   support
+
+               0       0.87      0.84      0.85       130
+               1       0.69      0.74      0.71        62
+
+        accuracy                           0.81       192
+       macro avg       0.78      0.79      0.78       192
+    weighted avg       0.81      0.81      0.81       192
+
+    Recall of diabetes on the training set: 0.81
+    Accuracy on the training set: 0.80
+    Recall of diabetes class on the test set: 0.74
+    Accuracy on the test set: 0.81
+    [[109  21]
+     [ 16  46]]
+
+
+
+    
+![png](img/output_16_1.png)
+
+
+
+
+
+![png](img/output_16_2.png)
+
+
+
 It may be concerning that the number of true negatives is comparable to the dummy classifier, but I wanted a conservative model and that is a price for that requirement. We have significantly
 increased our recall on diabetes, and our accuracy is still good. But, as a reality check, let's set the threshold to .5 instead of adjusting the threshold
 to improve recall.
-
-
-```python
-summary_of_model_nothresh(grid_clf_boost, X_train, X_test, y_train, y_test)
-```
 
 ### Logistic Regression Classifier
 
@@ -607,487 +564,15 @@ summary_of_model(grid_clf_log, X_train, X_test, y_train, y_test, thresh)
 
 
 
-![png](output_23_1.png)
+![png](img/output_22_1.png)
 
 
 
 
 
-![png](output_23_2.png)
+![png](img/output_22_2.png)
 
 
-
-
-```python
-from sklearn.svm import SVC
-svc_param_grid = {'C': [1, 10],
-                  'gamma': [10, 1, 1e-1],
-                  'kernel': ['rbf'],
-                  'probability': [True]} # , , 'sigmoid'
-clf_svc = SVC(random_state = RAND_STATE)
-grid_clf_svc = GridSearchCV(clf_svc, svc_param_grid, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
-grid_clf_svc.fit(X_train, y_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_svc.best_params_, grid_clf_svc.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_svc, y_train, X_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_svc, X_train, X_test, y_train, y_test, thresh)
-```
-
-
-```python
-from sklearn.ensemble import RandomForestClassifier
-forest_param_grid = {'n_estimators': np.arange(50, 100, 200),
-                     'max_depth': [2, 3, 4],
-                     'max_features': ['auto', 'sqrt', 'log2', None]}
-clf_forest = RandomForestClassifier(random_state = RAND_STATE)
-grid_clf_forest = GridSearchCV(clf_forest, forest_param_grid, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS)
-grid_clf_forest.fit(X_train, y_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_forest.best_params_, grid_clf_forest.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_forest, y_train, X_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_forest, X_train, X_test, y_train, y_test, thresh)
-```
-
-
-```python
-from sklearn.neighbors import KNeighborsClassifier
-clf_knn = KNeighborsClassifier()
-knn_param_grid = {'n_neighbors': [2, 3, 4]}
-grid_clf_knn = GridSearchCV(clf_knn, knn_param_grid, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS,)
-grid_clf_knn.fit(X_train, y_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_knn.best_params_, grid_clf_knn.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_knn, y_train, X_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_knn, X_train, X_test, y_train, y_test, thresh)
-```
-
-
-```python
-from sklearn.tree import DecisionTreeClassifier
-clf_tree = DecisionTreeClassifier(random_state = RAND_STATE)
-tree_param_grid = {'max_depth': np.arange(1, 4), 'max_features': ['auto', 'sqrt', 'log2'] }
-grid_clf_tree = GridSearchCV(clf_tree, tree_param_grid, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS)
-grid_clf_tree.fit(X_train, y_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_tree.best_params_, grid_clf_tree.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_tree, y_train, X_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_tree, X_train, X_test, y_train, y_test, thresh) #my stragety of finding a minimum threshold for 80% recall is clearly not working for the KNN
-```
-
-
-```python
-summary_of_model_nothresh(grid_clf_tree, X_train, X_test, y_train, y_test)
-```
-
-
-
-### Feature Setup, Scale Data, One-Hot Encode the Age
-
-
-```python
-df_cat = df
-df['age_cat'] = pd.cut(df['age'], bins=[0, 25, 35, 45, 60, float('Inf')], labels=['very young', 'young', 'mid_young', 'mid', 'old'])
-df_bmi_cat = pd.cut(df['bmi'], bins=[0, 18.5, 25, 30, float('Inf')], labels=['healthy', 'overweight', 'obese', 'very_obese'])
-df.head()
-```
-
-
-```python
-cols_num = ['pregnancies', 'glucose', 'bloodpressure', 'insulin', 'bmi', 'diabetespedigreefunction'] #not including skin thickness, age (since age now categorical)
-df_num = df[cols_num]
-cols_cat = ['age_cat', 'outcome']
-df_cat = df[cols_cat]
-```
-
-
-```python
-ss = StandardScaler()
-df_num_scaled = pd.DataFrame(ss.fit_transform(df_num), index=df_num.index, columns=df_num.columns)
-df_num_scaled.head()
-```
-
-
-```python
-ycat1 = df_cat.pop('outcome')
-```
-
-
-```python
-df_cat.head()
-```
-
-
-```python
-df_cat_encoded = pd.get_dummies(df_cat)
-df_cat_encoded.head()
-```
-
-
-```python
-df_rejoined = pd.concat([df_num_scaled, df_cat_encoded], axis=1)
-df_rejoined.head()
-```
-
-
-```python
-Xcat1_train, Xcat1_test, ycat1_train, ycat1_test = train_test_split(df_rejoined, ycat1, test_size=TEST_FRACTION, random_state = RAND_STATE)
-```
-
-### Gradient Boosted Classifier, One-hot Encoding on the Age
-
-
-```python
-from sklearn.ensemble import GradientBoostingClassifier
-clf_boost_cat1 = GradientBoostingClassifier(random_state = RAND_STATE)
-grid_clf_boost_cat1 = GridSearchCV(clf_boost_cat1, param_grid=grid_values_boost, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
-#note: using the parameters from previous gridsearch on gradient boosting classifier
-grid_clf_boost_cat1.fit(Xcat1_train, ycat1_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_boost_cat1.best_params_, grid_clf_boost_cat1.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_boost_cat1, ycat1_train, Xcat1_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_boost_cat1, Xcat1_train, Xcat1_test, ycat1_train, ycat1_test, thresh) #Summary for lowering the threshold to achieve necessary recall on diabetes
-```
-
-### Logistic Regression, One-hot Encoding on the Age
-
-
-```python
-clf_log_cat1 = LogisticRegression(random_state = RAND_STATE)
-grid_clf_log_cat1 = GridSearchCV(clf_log_cat1, param_grid=grid_values_log, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
-grid_clf_log_cat1.fit(Xcat1_train, ycat1_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_log_cat1.best_params_, grid_clf_log_cat1.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_log_cat1, ycat1_train, Xcat1_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_log_cat1, Xcat1_train, Xcat1_test, ycat1_train, ycat1_test, thresh)
-```
-
-### Feature Setup, Scale Data, One-Hot Encode the Age and BMI
-
-
-```python
-df_cat = df
-df['age_cat'] = pd.cut(df['age'], bins=[0, 25, 35, 45, 60, float('Inf')], labels=['very young', 'young', 'mid_young', 'mid', 'old'])
-df['bmi_cat'] = pd.cut(df['bmi'], bins=[0, 18.5, 25, 30, float('Inf')], labels=['healthy', 'overweight', 'obese', 'very_obese'])
-df.head()
-```
-
-
-```python
-cols_num = ['pregnancies', 'glucose', 'bloodpressure', 'insulin', 'diabetespedigreefunction'] #not including skin thickness, age, bmi (since age, bmi now categorical)
-df_num = df[cols_num]
-cols_cat = ['age_cat', 'bmi_cat', 'outcome']
-df_cat = df[cols_cat]
-```
-
-
-```python
-ss = StandardScaler()
-#pd.pivot_table(df, index=['outcome'],  values = df.columns, aggfunc = np.mean)
-df_num_scaled = pd.DataFrame(ss.fit_transform(df_num), index=df_num.index, columns=df_num.columns)
-df_num_scaled.head()
-```
-
-
-```python
-ycat2 = df_cat.pop('outcome')
-```
-
-
-```python
-df_cat_encoded = pd.get_dummies(df_cat)
-df_cat_encoded.head()
-```
-
-
-```python
-df_rejoined = pd.concat([df_num_scaled, df_cat_encoded], axis=1)
-df_rejoined.head()
-```
-
-
-```python
-Xcat2_train, Xcat2_test, ycat2_train, ycat2_test = train_test_split(df_rejoined, ycat2, test_size=TEST_FRACTION, random_state = RAND_STATE)
-```
-
-### Gradient Boosting Classifier, One-hot Encoding on the Age and BMI
-
-
-```python
-from sklearn.ensemble import GradientBoostingClassifier
-clf_log = LogisticRegression(random_state = RAND_STATE)
-grid_clf_boost_cat2 = GridSearchCV(clf_boost, param_grid=grid_values_boost, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
-grid_clf_boost_cat2.fit(Xcat2_train, ycat2_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_boost_cat2.best_params_, grid_clf_boost_cat2.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_boost_cat2, ycat2_train, Xcat2_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_boost_cat2, Xcat2_train, Xcat2_test, ycat2_train, ycat2_test, thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_boost_cat2, Xcat2_train, Xcat2_test, ycat2_train, ycat2_test, .5) #Summary using a threshold of .5
-```
-
-### Logistic Regression, One-hot Encoding on the Age and BMI
-
-
-```python
-clf_log_cat2 = LogisticRegression(random_state = RAND_STATE)
-grid_clf_log_cat2 = GridSearchCV(clf_log_cat2, param_grid=grid_values_log, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
-grid_clf_log_cat2.fit(Xcat2_train, ycat2_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_log_cat2.best_params_, grid_clf_log_cat2.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_log_cat2, ycat2_train, Xcat2_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_log_cat2, Xcat2_train, Xcat2_test, ycat2_train, ycat2_test, thresh)
-```
-
-### Feature Setup, Scale Data, One-Hot Encode just the BMI
-
-
-```python
-df_cat = df
-df['bmi_cat'] = pd.cut(df['bmi'], bins=[0, 18.5, 25, 30, float('Inf')], labels=['healthy', 'overweight', 'obese', 'very_obese'])
-df.head()
-```
-
-
-```python
-cols_num = ['pregnancies', 'glucose', 'bloodpressure', 'insulin', 'diabetespedigreefunction', 'age'] #not including skin thickness, bmi (since bmi now categorical)
-df_num = df[cols_num]
-cols_cat = ['bmi_cat', 'outcome']
-df_cat = df[cols_cat]
-```
-
-
-```python
-ss = StandardScaler()
-#pd.pivot_table(df, index=['outcome'],  values = df.columns, aggfunc = np.mean)
-df_num_scaled = pd.DataFrame(ss.fit_transform(df_num), index=df_num.index, columns=df_num.columns)
-df_num_scaled.head()
-```
-
-
-```python
-ycat3 = df_cat.pop('outcome')
-df_cat_encoded = pd.get_dummies(df_cat)
-df_cat_encoded.head()
-```
-
-
-```python
-df_rejoined = pd.concat([df_num_scaled, df_cat_encoded], axis=1)
-df_rejoined.head()
-```
-
-
-```python
-Xcat3_train, Xcat3_test, ycat3_train, ycat3_test = train_test_split(df_rejoined, ycat3, test_size=TEST_FRACTION, random_state = RAND_STATE)
-```
-
-### Gradient Boosted Classifier with One-Hot Encoding just on BMI
-
-
-```python
-from sklearn.ensemble import GradientBoostingClassifier
-clf_boost_cat3 = GradientBoostingClassifier(random_state = RAND_STATE)
-grid_clf_boost_cat3 = GridSearchCV(clf_boost_cat3, param_grid=grid_values_boost, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
-# note: using previous parameter search parameters
-grid_clf_boost_cat3.fit(Xcat3_train, ycat3_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_boost_cat3.best_params_, grid_clf_boost_cat3.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_boost_cat3, ycat3_train, Xcat3_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_boost_cat3, Xcat3_train, Xcat3_test, ycat3_train, ycat3_test, thresh)
-```
-
-
-```python
-clf_log_cat3 = LogisticRegression(random_state = RAND_STATE)
-grid_clf_log_cat3 = GridSearchCV(clf_log_cat3, param_grid=grid_values_log, cv=CV, scoring=OPT_ON, n_jobs=N_JOBS, verbose=2)
-grid_clf_log_cat3.fit(Xcat3_train, ycat3_train)
-```
-
-
-```python
-print('Best Params: {}, \n Best score: {}'.format(grid_clf_log_cat3.best_params_, grid_clf_log_cat3.best_score_))
-```
-
-
-```python
-thresh = find_threshold(grid_clf_log_cat3, ycat3_train, Xcat3_train)
-print(thresh)
-```
-
-
-```python
-summary_of_model(grid_clf_log_cat3, Xcat3_train, Xcat3_test, ycat3_train, ycat3_test, thresh)
-```
-
-
-```python
-from sklearn.pipeline import Pipeline
-from sklearn.impute import SimpleImputer
-from sklearn.compose import ColumnTransformer
-df = pd.read_csv('data/diabetes.csv')
-df.columns = df.columns.str.lower()
-df.head()
-```
-
-
-```python
-y=df.pop('outcome')
-X_train, X_test, y_train, y_test = train_test_split(df, y, test_size=TEST_FRACTION, random_state = RAND_STATE)
-```
-
-
-```python
-# In order to use an imputer, we'll need to set the zeros in glucose, bloodpressure, insulin, bmi to nan
-df['glucose'].replace(0, np.NaN, inplace=True)
-df['bloodpressure'].replace(0, np.NaN, inplace=True)
-df['insulin'].replace(0, np.NaN, inplace=True)
-df['bmi'].replace(0, np.NaN, inplace=True)
-df['skinthickness'].replace(0, np.NaN, inplace=True)
-df.head()
-```
-
-
-```python
-cols_to_scale = ['pregnancies',  'glucose', 'bloodpressure', 'insulin', 'bmi', 'diabetespedigreefunction', 'age'  ]
-numeric_transformer = Pipeline(steps = [('imputer', SimpleImputer(strategy='mean')), ('scaler', StandardScaler())])
-preprocessor = ColumnTransformer(
-    transformers=[
-        ("num", numeric_transformer, cols_to_scale)
-    ]
-)
-```
-
-
-```python
-grid_values_boost = {'gradboost__n_estimators': [100, 200, 300, 400, 500],
-                     'gradboost__learning_rate': [5e-3, 6e-3, 7e-3, 8e-3],
-                     'gradboost__max_depth': [2, 3]
-                    }
-clf_gradboost = GradientBoostingClassifier(random_state = RAND_STATE)
-pipe = Pipeline([("preprocessor", preprocessor), ("gradboost", clf_gradboost)])
-search = GridSearchCV(pipe, grid_values_boost, n_jobs=2)
-search.fit(X_train, y_train)
-print('Best Params: {}, \n Best score: {}'.format(search.best_params_, search.best_score_))
-thresh = find_threshold(search, y_train, X_train)
-print(thresh)
-summary_of_model(search, X_train, X_test, y_train, y_test, thresh)
-```
-
-
-```python
-summary_of_model_nothresh(search, X_train, X_test, y_train, y_test)
-```
 
 
 ```python
