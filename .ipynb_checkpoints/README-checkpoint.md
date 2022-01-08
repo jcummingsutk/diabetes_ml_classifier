@@ -75,42 +75,6 @@ The [jupyter notebook](https://github.com/jcummingsutk/diabetes_ml_classifier/bl
 
 Below you'll find a summary of the gradient boosting model including precision, recall information and a confusion  matrix.
 
-- Gradient Boosting:
-    * All data numerical:
-        * Recall: 74%
-        * Accuracy: 81%
-    * One-Hot on just Age
-        * Recall: 74%
-        * Accuracy: 81%
-    * One-Hot on Age, BMI
-        * Recall: 74%
-        * Accuracy: 78%
-    * One-Hot on just BMI
-        * Recall: 68%
-        * Accuracy: 79%
-
-
-- Logistic Regression:
-    * All data numerical:
-        * Recall: 76%
-        * Accuracy: 81%
-    * One-Hot on just Age
-        * Recall: 81%
-        * Accuracy: 78%
-    * One-Hot on Age, BMI
-        * Recall: 79%
-        * Accuracy: 79%
-    * One-Hot on just BMI
-        * Recall: 81%
-        * Accuracy: 76%
-
-
-# Shortened Notebook
-
-## Summary of Gradient Boosting Model
-
-Below you'll find a summary of the gradient boosting model including precision, recall information and a confusion  matrix.
-
 ```python
 summary_of_model(grid_clf_boost, X_train, X_test, y_train, y_test, thresh)
 ```
