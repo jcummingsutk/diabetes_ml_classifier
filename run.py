@@ -1,7 +1,7 @@
 from src.utils.data_utils import load_data, pop_train_test_split
 from src.utils.model_utils import find_optimal_model
 import pickle
-from src.models.predict import predict
+from predict import predict
 
 
 def train_model():
@@ -20,7 +20,7 @@ def make_prediction(input_parameters):
 #make_prediction([[6, 148, 72, 0, 25, 0.627, 50]])
 
 if __name__ == "__main__":
-    train_model()
+    #train_model()
     pred = make_prediction([[6, 148, 72, 125, 40, 0.627, 50]])
     print("The test prediction is {}".format(pred))
 
