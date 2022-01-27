@@ -67,10 +67,6 @@ The [jupyter notebook](https://github.com/jcummingsutk/diabetes_ml_classifier/bl
         * Recall: 81%
         * Accuracy: 76%
 
-- Random Forest:
-    * Recall: 69%
-    * Accuarcy: 80%
-
 
 ## Summary of Gradient Boosting Model, All Variables Numeric
 
