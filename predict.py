@@ -19,8 +19,8 @@ def predict(input_params):
     except IOError:
         thresh = 0.5
         logging.info("using default threshold of {:.2f}".format(thresh))
-    model = pickle.load(open("src/models/model.pkl", "rb"))
-    ss = pickle.load(open("src/models/scaler.pkl", "rb"))
+    model = pickle.load(open("model.pkl", "rb"))
+    ss = pickle.load(open("scaler.pkl", "rb"))
     transformed_params = ss.transform(input_params)
     probabilities = model.predict_proba(transformed_params)
     print("the probabilities are {}".format(probabilities))

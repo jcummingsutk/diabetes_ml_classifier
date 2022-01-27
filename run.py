@@ -1,5 +1,5 @@
-from src.utils.data_utils import load_data, pop_train_test_split
-from src.utils.model_utils import find_optimal_model
+from data_utils import load_data, pop_train_test_split
+from model_utils import find_optimal_model
 import pickle
 from predict import predict
 
@@ -11,7 +11,7 @@ def train_model():
     df_scaled = load_data()
     X_train, _ , y_train, _ = pop_train_test_split(df_scaled)
     grid_clf_boost = find_optimal_model(X_train, y_train)
-    pickle.dump(grid_clf_boost, open("src/models/model.pkl", "wb"))
+    pickle.dump(grid_clf_boost, open("model.pkl", "wb"))
 
 def make_prediction(input_parameters):
     return predict(input_parameters)
